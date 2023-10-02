@@ -1,29 +1,30 @@
 import re
-from collections import Counter
 
-def most_used_words(file_path, num_words):
+def count_messages(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = file.read()
 
-        # Tokenize words
-        words = re.findall(r'\b\w+\b', data.lower())
+        # Count total messages
+        messages = data.split('\n')
+        total_messages = len(messages)
 
-        # Count word frequencies
-        word_counter = Counter(words)
+        # Count media messages
+        media_messages = len([msg for msg in messages if '<Media omitted>' in msg])
 
-        # Get the most common words
-        most_common_words = word_counter.most_common(num_words)
+        # Count links
+        link_pattern = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+        links = re.findall(link_pattern, data)
+        total_links = len(links)
 
-        return most_common_words
+        return total_messages, media_messages, total_links
 
 # Usage example
 file_path = '_chat.txt'  # Replace with the actual file path
-num_words = 10  # Change this to get a different number of most common words
-common_words = most_used_words(file_path, num_words)
+total_messages, media_messages, total_links = count_messages(file_path)
 
-print(f'The {num_words} most common words are:')
-for word, count in common_words:
-    print(f'{word}: {count} times')
+print(f'Total Messages: {total_messages}')
+print(f'Media Messages: {media_messages}')
+print(f'Total Links: {total_links}')
 
 
     
